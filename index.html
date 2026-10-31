@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>T-Rex Dino Runner</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="game-wrapper">
+    <header class="game-header">
+      <h1 class="game-title">T-REX RUNNER</h1>
+      <div class="scoreboard">
+        <span class="score-label">HI</span>
+        <span id="high-score" class="score-value">00000</span>
+        <span id="current-score" class="score-value active-score">00000</span>
+      </div>
+    </header>
+
+    <div class="canvas-container">
+      <canvas id="game-canvas" width="800" height="260"></canvas>
+      
+      <div id="start-overlay" class="overlay">
+        <div class="overlay-card">
+          <div class="dino-icon">🦖</div>
+          <h2>PRESS SPACE TO PLAY</h2>
+          <p>Jump over cacti &amp; duck under pterodactyls</p>
+          <button id="start-btn" class="arcade-btn">START GAME</button>
+        </div>
+      </div>
+
+      <div id="game-over-overlay" class="overlay hidden">
+        <div class="overlay-card">
+          <h2 class="game-over-text">GAME OVER</h2>
+          <p id="game-over-score">Score: 0</p>
+          <button id="restart-btn" class="arcade-btn">PLAY AGAIN</button>
+          <span class="key-hint">or press SPACE / ENTER</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Touch Controls -->
+    <div class="touch-controls">
+      <button id="touch-duck" class="touch-btn">⬇ DUCK</button>
+      <button id="touch-jump" class="touch-btn">⬆ JUMP</button>
+    </div>
+
+    <footer class="game-footer">
+      <div class="instructions">
+        <span><kbd>Space</kbd> / <kbd>↑</kbd> Jump</span>
+        <span><kbd>↓</kbd> Duck</span>
+        <span><kbd>M</kbd> Mute Audio</span>
+      </div>
+      <div class="audio-toggle">
+        <button id="sound-btn" class="icon-btn" title="Toggle Sound">🔊 Sound: ON</button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
