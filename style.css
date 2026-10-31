@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 :root {
@@ -11,25 +12,35 @@
   --text-muted: #888888;
   --border-color: #e0e0e0;
   --primary-color: #222222;
-  --accent-color: #2e7d32;
+  --accent-color: #10b981;
+  --accent-hover: #059669;
   --btn-hover: #333333;
   --night-bg: #202124;
   --night-text: #e8eaed;
+  --night-card: #292a2d;
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
 }
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 16px;
   user-select: none;
   -webkit-user-select: none;
-  transition: background-color 0.5s ease, color 0.5s ease;
+  touch-action: manipulation;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 body.night-mode {
@@ -43,24 +54,26 @@ body.night-mode {
   box-shadow: var(--shadow);
   width: 100%;
   max-width: 860px;
-  padding: 24px 28px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   border: 1px solid var(--border-color);
-  transition: background-color 0.5s ease, border-color 0.5s ease;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 body.night-mode .game-wrapper {
-  background-color: #292a2d;
+  background-color: var(--night-card);
   border-color: #3c4043;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
+/* Header */
 .game-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
 }
 
 .game-title {
@@ -76,9 +89,9 @@ body.night-mode .game-title {
 
 .scoreboard {
   font-family: 'Press Start 2P', monospace;
-  font-size: 14px;
+  font-size: 13px;
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 }
 
@@ -100,6 +113,7 @@ body.night-mode .active-score {
   color: #fff;
 }
 
+/* Canvas Container */
 .canvas-container {
   position: relative;
   width: 100%;
@@ -108,7 +122,8 @@ body.night-mode .active-score {
   overflow: hidden;
   background-color: #fafafa;
   border: 2px solid var(--border-color);
-  transition: background-color 0.5s ease, border-color 0.5s ease;
+  touch-action: none;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 body.night-mode .canvas-container {
@@ -120,23 +135,26 @@ body.night-mode .canvas-container {
   width: 100%;
   height: 100%;
   display: block;
+  touch-action: none;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
 
+/* Overlay */
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.90);
   display: flex;
   justify-content: center;
   align-items: center;
-  backdrop-filter: blur(3px);
-  transition: opacity 0.25s ease, visibility 0.25s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
 body.night-mode .overlay {
-  background: rgba(24, 24, 24, 0.88);
+  background: rgba(24, 24, 24, 0.92);
 }
 
 .overlay.hidden {
@@ -147,16 +165,17 @@ body.night-mode .overlay {
 
 .overlay-card {
   text-align: center;
-  padding: 24px 32px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  max-width: 90%;
 }
 
 .dino-icon {
-  font-size: 48px;
-  animation: bounce 1s infinite alternate ease-in-out;
+  font-size: 44px;
+  animation: bounce 0.9s infinite alternate ease-in-out;
 }
 
 @keyframes bounce {
@@ -166,8 +185,9 @@ body.night-mode .overlay {
 
 .overlay-card h2 {
   font-family: 'Press Start 2P', monospace;
-  font-size: 16px;
+  font-size: 15px;
   color: var(--text-color);
+  line-height: 1.4;
 }
 
 body.night-mode .overlay-card h2 {
@@ -175,32 +195,37 @@ body.night-mode .overlay-card h2 {
 }
 
 .game-over-text {
-  color: #d32f2f !important;
+  color: #ef4444 !important;
 }
 
 .overlay-card p {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-muted);
+}
+
+.mobile-hint {
+  display: none;
 }
 
 .arcade-btn {
   font-family: 'Press Start 2P', monospace;
   font-size: 11px;
-  background: #333333;
+  background: #222222;
   color: #ffffff;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: 14px 28px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
   margin-top: 6px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  touch-action: manipulation;
 }
 
 .arcade-btn:hover {
-  background: #111111;
+  background: #000000;
   transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.22);
 }
 
 .arcade-btn:active {
@@ -213,7 +238,7 @@ body.night-mode .arcade-btn {
 }
 
 body.night-mode .arcade-btn:hover {
-  background: #e0e0e0;
+  background: #e2e8f0;
 }
 
 .key-hint {
@@ -221,39 +246,94 @@ body.night-mode .arcade-btn:hover {
   color: var(--text-muted);
 }
 
+/* Touch Controls Bar (Mobile & Tablets) */
 .touch-controls {
-  display: none;
-  gap: 12px;
-}
-
-@media (max-width: 768px) {
-  .touch-controls {
-    display: flex;
-  }
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  margin-top: 2px;
 }
 
 .touch-btn {
   flex: 1;
-  padding: 14px;
+  min-height: 68px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
   font-family: 'Press Start 2P', monospace;
-  font-size: 12px;
-  background-color: #e5e7eb;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  font-size: 13px;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  background-color: #f1f5f9;
   color: var(--text-color);
-  touch-action: manipulation;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
 }
 
-.touch-btn:active {
-  background-color: #cbd5e1;
+.touch-btn .touch-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.touch-btn .touch-text {
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.touch-btn:active, .touch-btn.active-touch {
+  transform: scale(0.96);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.duck-btn {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.duck-btn:active, .duck-btn.active-touch {
+  background-color: #e2e8f0;
+}
+
+.jump-btn {
+  background-color: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.jump-btn:active, .jump-btn.active-touch {
+  background-color: #d1fae5;
+  color: #047857;
 }
 
 body.night-mode .touch-btn {
   background-color: #374151;
   color: #f3f4f6;
   border-color: #4b5563;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
+body.night-mode .duck-btn:active, body.night-mode .duck-btn.active-touch {
+  background-color: #4b5563;
+}
+
+body.night-mode .jump-btn {
+  background-color: #064e3b;
+  border-color: #059669;
+  color: #a7f3d0;
+}
+
+body.night-mode .jump-btn:active, body.night-mode .jump-btn.active-touch {
+  background-color: #047857;
+  color: #ecfdf5;
+}
+
+/* Footer & Instructions */
 .game-footer {
   display: flex;
   justify-content: space-between;
@@ -266,38 +346,45 @@ body.night-mode .touch-btn {
 
 .instructions {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.mobile-only {
+  display: none;
 }
 
 kbd {
-  background: #eee;
+  background: #f1f5f9;
   border-radius: 4px;
-  border: 1px solid #ccc;
-  box-shadow: 0 1px 1px rgba(0,0,0,0.2);
-  color: #333;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+  color: #334155;
   display: inline-block;
   font-size: 10px;
   font-family: monospace;
   padding: 2px 6px;
-  margin-right: 4px;
+  margin-right: 2px;
 }
 
 body.night-mode kbd {
-  background: #3c4043;
-  border-color: #5f6368;
-  color: #e8eaed;
+  background: #374151;
+  border-color: #4b5563;
+  color: #e5e7eb;
 }
 
 .icon-btn {
   background: transparent;
   border: 1px solid var(--border-color);
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 12px;
   color: var(--text-muted);
+  font-weight: 500;
   transition: all 0.2s ease;
+  touch-action: manipulation;
 }
 
 .icon-btn:hover {
@@ -308,4 +395,55 @@ body.night-mode kbd {
 body.night-mode .icon-btn {
   border-color: #3c4043;
   color: var(--night-text);
+}
+
+/* Responsive Breakpoints for Mobile */
+@media (max-width: 680px) {
+  body {
+    padding: 8px;
+    align-items: flex-start;
+  }
+
+  .game-wrapper {
+    padding: 14px 14px;
+    gap: 12px;
+    border-radius: 12px;
+  }
+
+  .game-title {
+    font-size: 11px;
+  }
+
+  .scoreboard {
+    font-size: 11px;
+    gap: 6px;
+  }
+
+  .overlay-card h2 {
+    font-size: 12px;
+  }
+
+  .overlay-card p {
+    font-size: 11px;
+  }
+
+  .desktop-hint {
+    display: none;
+  }
+
+  .mobile-hint {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: flex;
+  }
+
+  .touch-btn {
+    min-height: 62px;
+  }
 }

@@ -741,6 +741,7 @@
     keys.duck = isDucking;
   }
 
+  // Keyboard Listeners
   window.addEventListener('keydown', (e) => {
     if (e.code === 'Space' || e.code === 'ArrowUp') {
       e.preventDefault();
@@ -766,34 +767,123 @@
     }
   });
 
-  // Buttons & UI Listeners
-  startBtn.addEventListener('click', () => {
-    handleJumpAction();
+  // Start & Restart Buttons
+  ['click', 'touchstart'].forEach((evt) => {
+    startBtn.addEventListener(evt, (e) => {
+      e.preventDefault();
+      handleJumpAction();
+    }, { passive: false });
+
+    restartBtn.addEventListener(evt, (e) => {
+      e.preventDefault();
+      handleJumpAction();
+    }, { passive: false });
   });
 
-  restartBtn.addEventListener('click', () => {
-    handleJumpAction();
-  });
+  // Mobile Touch & Swipe Gesture Recognition on Canvas
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+  let isSwipingDown = false;
 
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    sound.init();
+    if (e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+      isSwipingDown = false;
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (e.touches.length > 0) {
+      const currentY = e.touches[0].clientY;
+      const deltaY = currentY - touchStartY;
+      // If user swipes downward by more than 24px, crouch/duck
+      if (deltaY > 24 && !isSwipingDown) {
+        isSwipingDown = true;
+        handleDuckAction(true);
+      }
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    const touchEndTime = Date.now();
+    const duration = touchEndTime - touchStartTime;
+
+    if (isSwipingDown) {
+      // Releasing finger ends the duck
+      handleDuckAction(false);
+      isSwipingDown = false;
+    } else if (e.changedTouches.length > 0) {
+      const endY = e.changedTouches[0].clientY;
+      const deltaY = endY - touchStartY;
+
+      // Quick tap OR upward swipe triggers jump
+      if (deltaY < -20 || duration < 300) {
+        handleJumpAction();
+      }
+    } else {
+      handleJumpAction();
+    }
+  }, { passive: false });
+
+  // Mouse / Pointer fallback on Canvas
   canvas.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    handleJumpAction();
+    if (e.pointerType === 'mouse') {
+      e.preventDefault();
+      handleJumpAction();
+    }
   });
 
-  // Touch controls
-  touchJumpBtn.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    handleJumpAction();
-  });
+  // On-Screen Virtual Touch Buttons
+  function bindTouchButton(btn, onDown, onUp) {
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      sound.init();
+      btn.classList.add('active-touch');
+      onDown();
+    }, { passive: false });
 
-  touchDuckBtn.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    handleDuckAction(true);
-  });
-  touchDuckBtn.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    handleDuckAction(false);
-  });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      btn.classList.remove('active-touch');
+      if (onUp) onUp();
+    }, { passive: false });
+
+    btn.addEventListener('touchcancel', () => {
+      btn.classList.remove('active-touch');
+      if (onUp) onUp();
+    });
+
+    // Pointer events for desktop testing or stylus
+    btn.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'touch') {
+        sound.init();
+        btn.classList.add('active-touch');
+        onDown();
+      }
+    });
+
+    btn.addEventListener('pointerup', (e) => {
+      if (e.pointerType !== 'touch') {
+        btn.classList.remove('active-touch');
+        if (onUp) onUp();
+      }
+    });
+
+    btn.addEventListener('pointerleave', () => {
+      btn.classList.remove('active-touch');
+      if (onUp) onUp();
+    });
+  }
+
+  bindTouchButton(touchJumpBtn, () => handleJumpAction(), null);
+  bindTouchButton(touchDuckBtn, () => handleDuckAction(true), () => handleDuckAction(false));
 
   function toggleSound() {
     const enabled = sound.toggle();
